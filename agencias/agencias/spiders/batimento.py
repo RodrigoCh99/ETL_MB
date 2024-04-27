@@ -1,37 +1,48 @@
+import os 
 import scrapy
+from pathlib import Path
+from urllib.parse import urlparse
 
-class AgenciasSpider(scrapy.Spider):
-    name = "batimento_agencias"
+def verificar_apagar_arquivo(nome_arquivo):
+    if os.path.exists(nome_arquivo):
+        os.remove(nome_arquivo)
+        print(f"O arquivo '{nome_arquivo}' foi apagado.")
+    else:
+        with open(nome_arquivo, 'a') as f:
+            print(f"O arquivo '{nome_arquivo}' foi criado.")
+
+class BatimentoSpider(scrapy.Spider):
+    name = "batimento"
 
     dicionario_batimento = {}
 
     def start_requests(self):
         urls = [
-            'https://agenciasbanco.com.br/agencias/sp/'
-            ,'https://agenciasbanco.com.br/agencias/mg/'
-            ,'https://agenciasbanco.com.br/agencias/rj/'
-            ,'https://agenciasbanco.com.br/agencias/rs/'
-            ,'https://agenciasbanco.com.br/agencias/pr/'
-            ,'https://agenciasbanco.com.br/agencias/ba/'
-            ,'https://agenciasbanco.com.br/agencias/sc/'
-            ,'https://agenciasbanco.com.br/agencias/go/'
-            ,'https://agenciasbanco.com.br/agencias/pe/'
-            ,'https://agenciasbanco.com.br/agencias/pa/'
-            ,'https://agenciasbanco.com.br/agencias/ce/'
-            ,'https://agenciasbanco.com.br/agencias/es/'
-            ,'https://agenciasbanco.com.br/agencias/df/'
-            ,'https://agenciasbanco.com.br/agencias/ma/'
-            ,'https://agenciasbanco.com.br/agencias/mt/'
-            ,'https://agenciasbanco.com.br/agencias/ms/'
-            ,'https://agenciasbanco.com.br/agencias/pb/'
-            ,'https://agenciasbanco.com.br/agencias/rn/'
-            ,'https://agenciasbanco.com.br/agencias/am/'
-            ,'https://agenciasbanco.com.br/agencias/se/'
-            ,'https://agenciasbanco.com.br/agencias/al/'
-            ,'https://agenciasbanco.com.br/agencias/pi/'
-            ,'https://agenciasbanco.com.br/agencias/ro/'
-            ,'https://agenciasbanco.com.br/agencias/to/'
-            ,'https://agenciasbanco.com.br/agencias/ac/'
+             'https://agenciasbanco.com.br/agencias/ac/'
+            #,'https://agenciasbanco.com.br/agencias/mg/'
+            #,'https://agenciasbanco.com.br/agencias/rj/'
+            #,'https://agenciasbanco.com.br/agencias/rs/'
+            #,'https://agenciasbanco.com.br/agencias/pr/'
+            #,'https://agenciasbanco.com.br/agencias/ba/'
+            #,'https://agenciasbanco.com.br/agencias/sc/'
+            #,'https://agenciasbanco.com.br/agencias/go/'
+            #,'https://agenciasbanco.com.br/agencias/pe/'
+            #,'https://agenciasbanco.com.br/agencias/pa/'
+            #,'https://agenciasbanco.com.br/agencias/ce/'
+            #,'https://agenciasbanco.com.br/agencias/es/'
+            #,'https://agenciasbanco.com.br/agencias/df/'
+            #,'https://agenciasbanco.com.br/agencias/ma/'
+            #,'https://agenciasbanco.com.br/agencias/mt/'
+            #,'https://agenciasbanco.com.br/agencias/ms/'
+            #,'https://agenciasbanco.com.br/agencias/pb/'
+            #,'https://agenciasbanco.com.br/agencias/rn/'
+            #,'https://agenciasbanco.com.br/agencias/am/'
+            #,'https://agenciasbanco.com.br/agencias/se/'
+            #,'https://agenciasbanco.com.br/agencias/al/'
+            #,'https://agenciasbanco.com.br/agencias/pi/'
+            #,'https://agenciasbanco.com.br/agencias/ro/'
+            #,'https://agenciasbanco.com.br/agencias/to/'
+            #,'https://agenciasbanco.com.br/agencias/sp/'
         ]
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse_cidades)
@@ -109,5 +120,7 @@ class AgenciasSpider(scrapy.Spider):
 
         import pandas as pd
 
+        verificar_apagar_arquivo("./dados/batimento.csv")
         df = pd.DataFrame(dados, columns=['CIDADE', 'BAIRRO', 'BANCO', 'AGENCIA'])
-        df.to_csv("./agencias/spiders/batimento.csv")
+        df.to_csv("./dados/batimento.csv", index=False)
+        print('salvou')
